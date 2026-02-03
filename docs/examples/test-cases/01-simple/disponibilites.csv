@@ -1,0 +1,6 @@
+nom,sessions_par_semaine,lundi_debut,lundi_fin,mardi_debut,mardi_fin,mercredi_debut,mercredi_fin,jeudi_debut,jeudi_fin,vendredi_debut,vendredi_fin,samedi_debut,samedi_fin,groupe_lie,notes
+Alice,2,08:00,12:00,,,09:00,11:00,,,,,,,,Débutante
+Bob,1,,,14:00,18:00,14:00,17:00,14:00,16:00,,,,,Charlie,Niveau intermédiaire
+Charlie,1,,,14:00,18:00,14:00,17:00,14:00,16:00,,,,,Bob,Niveau intermédiaire
+David,1,,,,,,,,,08:00,12:00,09:00,13:00,,Expert
+Emma,2,10:00,12:00,10:00,12:00,10:00,12:00,,,,,,,,"Flexible préfère le matin"

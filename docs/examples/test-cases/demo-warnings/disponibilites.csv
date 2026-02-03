@@ -1,0 +1,6 @@
+nom,sessions_par_semaine,lundi_debut,lundi_fin,mardi_debut,mardi_fin,mercredi_debut,mercredi_fin,jeudi_debut,jeudi_fin,vendredi_debut,vendredi_fin,samedi_debut,samedi_fin,groupe_lie,notes
+Alice,2,09:00,12:00,09:00,12:00,09:00,12:00,09:00,12:00,09:00,12:00,,,Bob,Débutante
+Bob,2,09:00,12:00,09:00,12:00,09:00,12:00,09:00,12:00,09:00,12:00,,,Alice,Débutant
+Charlie,1,10:00,12:00,10:00,12:00,10:00,12:00,10:00,12:00,10:00,12:00,,,,Solo
+David,2,09:00,12:00,09:00,12:00,09:00,12:00,09:00,12:00,09:00,12:00,,,,Solo disponible matin
+Emma,1,08:00,10:00,08:00,10:00,08:00,10:00,08:00,10:00,08:00,10:00,,,,Solo début matinée

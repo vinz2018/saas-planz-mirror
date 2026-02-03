@@ -1,0 +1,15 @@
+nom,sessions_par_semaine,lundi_debut,lundi_fin,mardi_debut,mardi_fin,mercredi_debut,mercredi_fin,jeudi_debut,jeudi_fin,vendredi_debut,vendredi_fin,samedi_debut,samedi_fin,groupe_lie,notes
+Camille,3,08:30,12:00,08:30,12:00,08:30,12:00,,,09:00,13:00,09:00,12:00,Léa,Avancée très flexible
+Léa,3,08:30,12:00,08:30,12:00,08:30,12:00,,,09:00,13:00,09:00,12:00,Camille,Avancée très flexible
+Antoine,2,,,14:00,18:00,14:00,18:00,14:00,18:00,14:00,17:30,,,Lucas,Intermédiaire après-midi
+Lucas,2,,,14:00,18:00,14:00,18:00,14:00,18:00,14:00,17:30,,,Antoine,Intermédiaire après-midi
+Marie,2,09:00,12:30,09:00,12:30,09:00,12:30,09:00,12:30,09:00,12:30,,,Pierre,Débutante matins semaine
+Pierre,2,09:00,12:30,09:00,12:30,09:00,12:30,09:00,12:30,09:00,12:30,,,Marie,Débutant matins semaine
+Océane,3,08:00,13:00,08:00,13:00,08:00,13:00,08:00,13:00,08:00,13:00,08:00,12:00,Hugo,Expert toute disponibilité
+Hugo,3,08:00,13:00,08:00,13:00,08:00,13:00,08:00,13:00,08:00,13:00,08:00,12:00,Océane,Expert toute disponibilité
+Chloé,2,,,15:30,18:30,15:30,18:30,15:30,18:30,15:30,18:30,10:00,13:00,Thomas,Flexible horaires variés
+Thomas,2,,,15:30,18:30,15:30,18:30,15:30,18:30,15:30,18:30,10:00,13:00,Chloé,Flexible horaires variés
+Julien,1,10:00,12:00,10:00,17:00,10:00,12:00,10:00,12:00,10:00,12:00,,,,Solo milieux matinée flexible
+Manon,2,,,14:30,18:00,14:30,18:00,14:30,18:00,14:30,18:00,09:30,12:30,,Solo après-midi samedi
+Raphaël,1,08:00,10:30,08:00,10:30,08:00,10:30,,,08:00,10:30,09:00,11:00,,Solo débuts matinée samedi
+Zoé,3,09:30,13:00,09:30,13:00,09:30,13:00,09:30,13:00,09:30,13:00,09:30,12:30,,Solo très régulière

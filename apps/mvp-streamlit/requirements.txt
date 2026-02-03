@@ -1,0 +1,12 @@
+# Core dependencies
+ortools==9.8.3296
+pandas==2.1.4
+streamlit==1.31.1
+
+# Testing
+pytest==7.4.4
+pytest-cov==4.1.0
+
+# Development
+black==24.1.1
+flake8==7.0.0

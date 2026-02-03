@@ -1,0 +1,10 @@
+nom,sessions_par_semaine,lundi_debut,lundi_fin,mardi_debut,mardi_fin,mercredi_debut,mercredi_fin,jeudi_debut,jeudi_fin,vendredi_debut,vendredi_fin,samedi_debut,samedi_fin,groupe_lie,notes
+Sophie,2,09:00,12:00,09:00,11:00,,,14:00,17:00,,,,,Julie,Débutante motivée
+Julie,2,09:00,12:00,09:00,11:00,,,14:00,17:00,,,,,Sophie,Débutante motivée
+Marc,2,,,14:00,18:00,14:00,18:00,14:00,18:00,14:00,17:00,,,Thomas,Niveau intermédiaire
+Thomas,2,,,14:00,18:00,14:00,18:00,14:00,18:00,14:00,17:00,,,Marc,Niveau intermédiaire
+Laura,3,08:00,12:00,08:00,12:00,08:00,12:00,,,10:00,13:00,09:00,12:00,Paul,Avancée flexible
+Paul,3,08:00,12:00,08:00,12:00,08:00,12:00,,,10:00,13:00,09:00,12:00,Laura,Avancé flexible
+Nicolas,1,10:00,12:00,,,10:00,12:00,10:00,12:00,10:00,12:00,,,,Solo expert matins
+Isabelle,2,,,15:00,18:00,15:00,18:00,15:00,18:00,15:00,18:00,,,,Solo après-midis uniquement
+Maxime,1,08:00,11:00,08:00,11:00,08:00,11:00,,,08:00,11:00,,,,Solo matins tôt
