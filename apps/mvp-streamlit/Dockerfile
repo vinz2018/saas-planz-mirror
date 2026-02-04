@@ -22,6 +22,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY core/ ./core/
 COPY docs/ ./docs/
 COPY apps/mvp-streamlit/app.py .
+COPY apps/mvp-streamlit/pages/ ./pages/
 
 # Expose Streamlit default port
 EXPOSE 8501

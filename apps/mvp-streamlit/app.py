@@ -17,6 +17,36 @@ from core.scheduler import generate_schedule
 from core.formatter import to_json, to_markdown
 from core.models import Slot
 
+# Error message translations
+ERROR_TRANSLATIONS = {
+    "Invalid time format": "Format d'heure invalide",
+    "Expected HH:MM": "Attendu au format HH:MM",
+    "Times must end in :00 or :30": "Les heures doivent se terminer par :00 ou :30",
+    "Invalid hour": "Heure invalide",
+    "Must be 0-23": "Doit être entre 0 et 23",
+    "Invalid time granularity": "Granularité d'heure invalide",
+    "start": "début",
+    "end": "fin",
+    "must be before": "doit être avant",
+    "Invalid time range": "Plage horaire invalide",
+    "Missing required column": "Colonne obligatoire manquante",
+    "column": "colonne",
+    "missing": "manquante",
+}
+
+
+def translate_error_message(error_msg: str) -> str:
+    """Traduit les messages d'erreur anglais en français.
+    
+    Limitation MVP: Traduction basée sur strings, fragile si messages 
+    dans core/parser.py changent. Pour robustesse future, créer des 
+    codes d'erreur ou exceptions typées.
+    """
+    translated = error_msg
+    for en, fr in ERROR_TRANSLATIONS.items():
+        translated = translated.replace(en, fr)
+    return translated
+
 
 # Page config
 if st:
@@ -73,8 +103,8 @@ def main():
         st.divider()
         
         st.markdown("### 📚 Documentation")
-        st.markdown("[Guide d'utilisation](docs/examples/README-template.md)")
-        st.markdown("[FAQ & Support](#)")
+        st.page_link("pages/documentation.py", label="📚 Documentation & Aide complète", icon="📖")
+        st.caption("Exemples pratiques + FAQ")
     
     # Main area - File upload
     st.header("📤 Étape 1: Charger les Fichiers")
@@ -135,8 +165,22 @@ def main():
                 # Reset file pointer for later use
                 availability_file.seek(0)
                 
+            except pd.errors.ParserError as e:
+                st.error("❌ **Erreur de format CSV**")
+                st.warning("Le fichier ne semble pas être un CSV valide. Vérifiez que :")
+                st.markdown("- Les colonnes sont séparées par des **virgules** (`,`)")
+                st.markdown("- Le fichier n'est pas au format Excel (.xlsx)")
+                st.markdown("- Le fichier est encodé en **UTF-8**")
+                st.info("💡 Téléchargez le template fourni pour voir le format attendu.")
+            except pd.errors.EmptyDataError:
+                st.error("❌ **Fichier vide**")
+                st.warning("Le CSV ne contient aucune donnée. Ajoutez au moins un élève.")
+            except KeyError as e:
+                st.error(f"❌ **Colonne manquante : {e}**")
+                st.warning("Le CSV doit contenir toutes les colonnes obligatoires.")
+                st.info("💡 Téléchargez le template fourni pour voir les colonnes requises.")
             except Exception as e:
-                st.error(f"❌ Erreur lors de la lecture du CSV: {e}")
+                st.error(f"❌ Erreur inattendue : {e}")
     
     with col2:
         st.subheader("Créneaux Récurrents (optionnel)")
@@ -167,8 +211,21 @@ def main():
                 # Reset file pointer
                 recurring_file.seek(0)
                 
+            except pd.errors.ParserError as e:
+                st.error("❌ **Erreur de format CSV**")
+                st.warning("Le fichier CSV récurrents n'est pas valide. Vérifiez que :")
+                st.markdown("- Les colonnes sont : `nom,jour,heure_debut,heure_fin`")
+                st.markdown("- Les colonnes sont séparées par des **virgules**")
+                st.info("💡 Téléchargez le template récurrents pour voir le format attendu.")
+            except pd.errors.EmptyDataError:
+                st.error("❌ **Fichier vide**")
+                st.warning("Le CSV récurrents ne contient aucune donnée.")
+            except KeyError as e:
+                st.error(f"❌ **Colonne manquante : {e}**")
+                st.warning("Le CSV récurrents doit contenir : `nom`, `jour`, `heure_debut`, `heure_fin`")
+                st.info("💡 Téléchargez le template récurrents pour voir les colonnes requises.")
             except Exception as e:
-                st.error(f"❌ Erreur lors de la lecture du CSV récurrents: {e}")
+                st.error(f"❌ Erreur inattendue : {e}")
     
     st.divider()
     
@@ -285,11 +342,27 @@ def main():
                     st.warning(f"⚠️ Solution partielle: {len(result.unplaced)} élève(s) non placé(s)")
                 
             except ParseError as e:
-                st.error(f"❌ Erreur de parsing CSV: {e}")
+                st.error("❌ **Erreur de validation CSV**")
+                # Traduire le message d'erreur
+                error_msg_fr = translate_error_message(str(e))
+                st.warning(f"**Détail :** {error_msg_fr}")
+                
+                # Détecter le type d'erreur et suggérer solution
+                error_msg = str(e).lower()
+                if "invalid time format" in error_msg or "format" in error_msg:
+                    st.info("💡 Les heures doivent être au format HH:MM (ex: 08:00, 17:30)")
+                elif "granularity" in error_msg or ":00 or :30" in error_msg:
+                    st.info("💡 Les minutes doivent être :00 ou :30 uniquement")
+                elif "missing column" in error_msg or "column" in error_msg:
+                    st.info("💡 Vérifiez que toutes les colonnes obligatoires sont présentes")
+                else:
+                    st.info("💡 Vérifiez le format de votre CSV avec le template fourni")
             except Exception as e:
-                st.error(f"❌ Erreur: {e}")
-                import traceback
-                st.code(traceback.format_exc())
+                st.error(f"❌ **Erreur lors de la génération :** {type(e).__name__}")
+                st.warning(str(e))
+                with st.expander("🔍 Détails techniques (pour debug)"):
+                    import traceback
+                    st.code(traceback.format_exc())
     
     # Display results if available
     if 'schedule_result' in st.session_state:
@@ -308,38 +381,136 @@ def main():
         for cls in result.schedule:
             schedule_by_day[cls.slot.day].append(cls)
         
-        # Display each day
-        for day in days_order:
-            classes = schedule_by_day[day]
-            if not classes:
-                continue
+        # Create tabs for different views
+        tab_calendar, tab_list = st.tabs(["📅 Vue Calendrier", "📋 Vue Détaillée"])
+        
+        # TAB 1: Calendar Grid View
+        with tab_calendar:
+            # Extract time range
+            all_times = []
+            for classes in schedule_by_day.values():
+                for cls in classes:
+                    all_times.append(cls.slot.start_time)
+                    all_times.append(cls.slot.end_time)
             
-            with st.expander(f"**{day.capitalize()}** ({len(classes)} cours)", expanded=True):
-                for cls in sorted(classes, key=lambda c: c.slot.start_time):
-                    status_icon = {"locked": "🔒", "proposed": "✅", "needs_validation": "⚠️"}.get(cls.status.value, "❓")
-                    st.write(
-                        f"{status_icon} **{cls.slot.start_time.strftime('%H:%M')}-{cls.slot.end_time.strftime('%H:%M')}** "
-                        f"- {', '.join(cls.students)} ({len(cls.students)} élèves)"
-                    )
+            if all_times:
+                min_hour = min(t.hour for t in all_times)
+                max_hour = max(t.hour for t in all_times)
+                
+                st.markdown("**Grille Hebdomadaire**")
+                st.caption(f"Vue d'ensemble : {min_hour}h à {max_hour}h")
+                
+                # Create calendar grid using columns
+                cols = st.columns(len(days_order))
+                
+                # Headers
+                for i, day in enumerate(days_order):
+                    with cols[i]:
+                        day_classes = schedule_by_day[day]
+                        st.markdown(f"**{day.capitalize()}**")
+                        st.caption(f"{len(day_classes)} cours")
+                
+                # Time slots
+                for hour in range(min_hour, max_hour + 1):
+                    for minute in [0, 30]:
+                        current_time = time(hour, minute)
+                        
+                        # Skip if past max time
+                        if current_time.hour == max_hour and current_time.minute > 0:
+                            break
+                        
+                        cols = st.columns(len(days_order))
+                        
+                        for i, day in enumerate(days_order):
+                            with cols[i]:
+                                # Find classes at this time
+                                day_classes = schedule_by_day[day]
+                                classes_at_time = [
+                                    cls for cls in day_classes 
+                                    if cls.slot.start_time == current_time
+                                ]
+                                
+                                if classes_at_time:
+                                    for cls in classes_at_time:
+                                        # Color based on number of students
+                                        if len(cls.students) == 1:
+                                            badge = "⚠️"
+                                            color = "orange"
+                                        else:
+                                            badge = "✅"
+                                            color = "green"
+                                        
+                                        # Display class info
+                                        students_str = ", ".join(cls.students[:2])
+                                        if len(cls.students) > 2:
+                                            students_str += f" +{len(cls.students)-2}"
+                                        
+                                        st.markdown(
+                                            f"<div style='background-color: {color}1a; padding: 8px; "
+                                            f"border-left: 3px solid {color}; margin-bottom: 4px; border-radius: 4px;'>"
+                                            f"<b>{cls.slot.start_time.strftime('%H:%M')}</b> {badge}<br>"
+                                            f"<small>{students_str}</small><br>"
+                                            f"<small>({len(cls.students)} élève{'s' if len(cls.students) > 1 else ''})</small>"
+                                            f"</div>",
+                                            unsafe_allow_html=True
+                                        )
+                                else:
+                                    # Empty slot
+                                    st.markdown(
+                                        f"<div style='padding: 8px; color: #ccc; font-size: 0.8em;'>"
+                                        f"{current_time.strftime('%H:%M')}</div>",
+                                        unsafe_allow_html=True
+                                    )
+            else:
+                st.info("Aucun cours planifié")
+        
+        # TAB 2: Detailed List View (existing display)
+        with tab_list:
+            # Display each day
+            for day in days_order:
+                classes = schedule_by_day[day]
+                if not classes:
+                    continue
+                
+                with st.expander(f"**{day.capitalize()}** ({len(classes)} cours)", expanded=True):
+                    for cls in sorted(classes, key=lambda c: c.slot.start_time):
+                        status_icon = {"locked": "🔒", "proposed": "✅", "needs_validation": "⚠️"}.get(cls.status.value, "❓")
+                        st.write(
+                            f"{status_icon} **{cls.slot.start_time.strftime('%H:%M')}-{cls.slot.end_time.strftime('%H:%M')}** "
+                            f"- {', '.join(cls.students)} ({len(cls.students)} élèves)"
+                        )
         
         # Warnings and Optimizations
         if result.warnings:
             st.subheader("⚠️ Avertissements et Optimisations Possibles")
-            st.info(
-                f"💡 {len(result.warnings)} créneau(x) peut/peuvent être optimisé(s) "
-                f"en ajoutant d'autres étudiants disponibles."
-            )
+            st.warning(f"⚠️ **{len(result.warnings)} créneau(x) à optimiser**")
+            st.markdown("""
+            💡 **Pourquoi optimiser ?**
+            - Un cours avec 1 seul élève est moins rentable
+            - D'autres élèves sont disponibles sur ces créneaux
+            - Vous pouvez ajouter ces élèves pour rentabiliser le créneau
+            """)
             
-            for warning in result.warnings:
+            for i, warning in enumerate(result.warnings):
                 if warning["type"] == "single_student_recurring":
-                    with st.expander(f"🔍 Créneau à optimiser : {warning['slot']}"):
-                        st.write(f"**Étudiant actuel :** {warning['student']}")
-                        st.warning(warning['message'])
+                    with st.expander(f"⚠️ Créneau #{i+1} : {warning['slot']} - **1 élève seul**"):
+                        st.markdown(f"**👤 Étudiant actuel :** {warning['student']}")
+                        st.info(warning['message'])
                         
                         if warning.get("suggestions"):
-                            st.write("**Suggestions d'optimisation :**")
-                            for suggestion in warning["suggestions"]:
-                                st.write(f"- {suggestion}")
+                            st.markdown("**💡 Suggestions d'optimisation :**")
+                            for j, suggestion in enumerate(warning["suggestions"], 1):
+                                st.markdown(f"{j}. {suggestion}")
+                            
+                            st.markdown("---")
+                            st.markdown("**🤔 Comment faire ?**")
+                            st.markdown("""
+                            Pour ajouter un élève suggéré sur ce créneau :
+                            1. Ouvrez le **CSV créneaux récurrents**
+                            2. Ajoutez une ligne avec : `nom_eleve,jour,heure_debut,heure_fin`
+                            3. Régénérez le planning
+                            """)
+                            st.caption("💡 Consultez la page Documentation & Aide pour des exemples détaillés")
         
         # Unplaced students
         if result.unplaced:

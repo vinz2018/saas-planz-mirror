@@ -13,6 +13,7 @@ services:
       # Mount source code for hot-reload during development
       - ../../core:/app/core
       - ./app.py:/app/app.py
+      - ./pages:/app/pages
       - ../../docs:/app/docs
     environment:
       - PYTHONUNBUFFERED=1
