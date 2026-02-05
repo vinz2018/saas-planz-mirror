@@ -1,11 +1,11 @@
 nom,sessions_par_semaine,lundi_debut,lundi_fin,mardi_debut,mardi_fin,mercredi_debut,mercredi_fin,jeudi_debut,jeudi_fin,vendredi_debut,vendredi_fin,samedi_debut,samedi_fin,groupe_lie,notes
-Vincent,2,,,17:00,18:30,,,,,12:00,13:30,,,jerome,
-Jerome,1,,,17:00,18:30,,,,,,,,,vincent,Toujours avec Vincent
+Vincent,2,,,17:00,18:30,,,,,12:00,13:30,,,Jerome,
+Jerome,1,,,17:00,18:30,,,,,,,,,Vincent,Toujours avec Vincent
 Hugo,2,08:00,09:00,,,,,08:00,09:00,,,,,
 Juliette,2,08:00,10:00,,,,,08:00,10:00,,,,,,Flexible matin
 Sarah,1,08:00,19:00,,,,,,,,,,,,Dispo toute la journée lundi
 Victor,2,,,,,12:00,14:00,,,12:00,14:00,,,,
-Caroline,1,,,,,,,,,,,09:00,10:00,franck,Avec Franck
-Franck,1,,,,,,,,,,,09:00,10:00,caroline,Avec Caroline
+Caroline,1,,,,,,,,,,,09:00,10:00,Franck,Avec Franck
+Franck,1,,,,,,,,,,,09:00,10:00,Caroline,Avec Caroline
 Pascal_A,2,18:00,19:30,,,,,,,18:00,19:00,,,,
 Stephanie,1,,,18:00,19:30,,,,,,,,,,
