@@ -4,29 +4,53 @@ stages:
 # Job pour synchroniser automatiquement vers GitHub
 mirror_to_github:
   stage: mirror
-  image: alpine/git:latest
+  image: bitnami/git:latest
+  
+  variables:
+    GIT_STRATEGY: clone
+    GIT_DEPTH: 0
   
   before_script:
     # Configure Git
-    - git config --global user.email "ci@gitlab.com"
-    - git config --global user.name "GitLab CI"
+    - git config --global user.email "gitlab-ci@saas-planz.com"
+    - git config --global user.name "GitLab CI Bot"
   
   script:
-    # Récupérer toutes les branches et tags
-    - git fetch --unshallow || git fetch --all
+    # Vérifier que les variables sont définies
+    - |
+      if [ -z "$GITHUB_TOKEN" ]; then
+        echo "❌ ERROR: GITHUB_TOKEN variable is not set"
+        exit 1
+      fi
+    - |
+      if [ -z "$GITHUB_USERNAME" ]; then
+        echo "❌ ERROR: GITHUB_USERNAME variable is not set"
+        exit 1
+      fi
+    - |
+      if [ -z "$GITHUB_REPO" ]; then
+        echo "❌ ERROR: GITHUB_REPO variable is not set"
+        exit 1
+      fi
     
-    # Ajouter le remote GitHub (utilise le token depuis les variables CI/CD)
-    - git remote add github https://${GITHUB_TOKEN}@github.com/${GITHUB_USERNAME}/${GITHUB_REPO}.git || true
+    - echo "✅ All variables are set"
+    - echo "📦 Preparing to mirror to github.com/${GITHUB_USERNAME}/${GITHUB_REPO}"
+    
+    # Ajouter le remote GitHub
+    - git remote add github "https://${GITHUB_TOKEN}@github.com/${GITHUB_USERNAME}/${GITHUB_REPO}.git" 2>/dev/null || git remote set-url github "https://${GITHUB_TOKEN}@github.com/${GITHUB_USERNAME}/${GITHUB_REPO}.git"
     
     # Push vers GitHub
+    - echo "🚀 Pushing to GitHub..."
     - git push github HEAD:main --force
     
-    # Optionnel: Push tous les tags
-    - git push github --tags --force || true
+    # Push les tags (optionnel)
+    - echo "🏷️ Pushing tags..."
+    - git push github --tags --force || echo "⚠️ No tags to push"
+    
+    - echo "✅ Mirror sync completed successfully!"
   
   only:
     - main
-    - master
   
   # Retry en cas d'échec réseau
   retry:
@@ -38,15 +62,14 @@ mirror_to_github:
 # Job optionnel: Vérifier que le miroir est à jour
 verify_mirror:
   stage: mirror
-  image: alpine/git:latest
+  image: alpine:latest
   
   script:
     - echo "✅ Mirror sync completed successfully"
-    - echo "GitHub repo should now be up to date"
+    - echo "📍 GitHub repo should now be up to date at https://github.com/${GITHUB_USERNAME}/${GITHUB_REPO}"
   
   only:
     - main
-    - master
   
   when: on_success
   needs: ["mirror_to_github"]
