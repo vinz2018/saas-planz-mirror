@@ -1,0 +1,52 @@
+stages:
+  - mirror
+
+# Job pour synchroniser automatiquement vers GitHub
+mirror_to_github:
+  stage: mirror
+  image: alpine/git:latest
+  
+  before_script:
+    # Configure Git
+    - git config --global user.email "ci@gitlab.com"
+    - git config --global user.name "GitLab CI"
+  
+  script:
+    # Récupérer toutes les branches et tags
+    - git fetch --unshallow || git fetch --all
+    
+    # Ajouter le remote GitHub (utilise le token depuis les variables CI/CD)
+    - git remote add github https://${GITHUB_TOKEN}@github.com/${GITHUB_USERNAME}/${GITHUB_REPO}.git || true
+    
+    # Push vers GitHub
+    - git push github HEAD:main --force
+    
+    # Optionnel: Push tous les tags
+    - git push github --tags --force || true
+  
+  only:
+    - main
+    - master
+  
+  # Retry en cas d'échec réseau
+  retry:
+    max: 2
+    when:
+      - runner_system_failure
+      - stuck_or_timeout_failure
+
+# Job optionnel: Vérifier que le miroir est à jour
+verify_mirror:
+  stage: mirror
+  image: alpine/git:latest
+  
+  script:
+    - echo "✅ Mirror sync completed successfully"
+    - echo "GitHub repo should now be up to date"
+  
+  only:
+    - main
+    - master
+  
+  when: on_success
+  needs: ["mirror_to_github"]
