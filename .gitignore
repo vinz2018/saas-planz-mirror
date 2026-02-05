@@ -19,50 +19,28 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
-MANIFEST
 
 # Virtual Environment
 venv/
 ENV/
 env/
-.venv
 
-# IDEs
+# IDE
 .vscode/
 .idea/
-.cursor/
-.claude/
 *.swp
 *.swo
 *~
-.DS_Store
 
 # Testing
 .pytest_cache/
 .coverage
 htmlcov/
-.tox/
-.hypothesis/
-
-# Docker
-*.log
-
-# Jupyter Notebook
-.ipynb_checkpoints
-
-# Environment variables
-.env
-.env.local
-
-# Temporary files
-*.tmp
-*.bak
-*.orig
-
-# Project specific
-docs/debug.log
-_bmad-output/agent-transcripts/
-_bmad-output/implementation-artifacts/*-archived-*.md
 
 # OS
+.DS_Store
 Thumbs.db
+
+# Temporary files
+*.log
+*.tmp
