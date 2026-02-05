@@ -3,12 +3,17 @@ Streamlit UI for SaaS Planz scheduling system.
 Local MVP interface for Tony to generate schedules.
 """
 
+# Add project root to Python path for imports
+import sys
+from pathlib import Path
+project_root = Path(__file__).parent.parent.parent
+sys.path.insert(0, str(project_root))
+
 try:
     import streamlit as st
 except ImportError:
     st = None
 
-from pathlib import Path
 import tempfile
 from datetime import time
 
